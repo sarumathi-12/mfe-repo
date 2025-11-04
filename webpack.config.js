@@ -6,6 +6,7 @@ module.exports = withModuleFederationPlugin({
 
   exposes: {
     './Component': './src/app/app.component.ts',
+    './Module': './src/app/remote-entry/remote-entry.module.ts',
   },
 
   shared: {

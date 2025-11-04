@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 
-const routes: Routes = [];
+const routes: Routes = [{ path: 'debt', loadChildren: () => import('./remote-entry/remote-entry.module').then(m => m.RemoteEntryModule) }];
 
 @NgModule({
   imports: [RouterModule.forRoot(routes)],
