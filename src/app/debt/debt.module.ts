@@ -12,7 +12,6 @@ import { RouterModule } from '@angular/router';
   ],
   imports: [
     CommonModule,
-    RouterModule.forChild([{ path: '', component: DebtComponent }]),
     DebtRoutingModule
   ]
 })
