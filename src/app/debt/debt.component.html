@@ -1,1 +1,27 @@
-<p>MFE is running!</p>
+<app-header></app-header>
+
+<div class="main-content-wrapper">
+<mat-card class="debt-container">
+  <!-- Material Tabs -->
+  <mat-tab-group [(selectedIndex)]="activeTab" class="custom-tabs">
+    <mat-tab label="General Info"></mat-tab>
+    <mat-tab label="Transactions"></mat-tab>
+    <mat-tab label="Proposal Info"></mat-tab>
+  </mat-tab-group>
+
+  <!-- Tab content switch -->
+  <div class="tab-content" [ngSwitch]="activeTab">
+    <ng-container *ngSwitchCase="debtTabs.GeneralInfo">
+      <app-general-info></app-general-info>
+    </ng-container>
+
+    <ng-container *ngSwitchCase="debtTabs.Transactions">
+
+    </ng-container>
+
+    <ng-container *ngSwitchCase="debtTabs.ProposalInfo">
+      
+    </ng-container>
+  </div>
+</mat-card>
+</div>
