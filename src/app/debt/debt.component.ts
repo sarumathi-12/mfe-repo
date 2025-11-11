@@ -1,17 +1,18 @@
 import { Component, ViewEncapsulation } from '@angular/core';
+import { DEFAULT_ENCAPSULATION } from '../_shared/constants/debt.const';
 
 @Component({
   selector: 'app-debt',
   templateUrl: './debt.component.html',
   styleUrls: ['./debt.component.scss'],
-  encapsulation: ViewEncapsulation.None
+  encapsulation: DEFAULT_ENCAPSULATION
 })
 export class DebtComponent {
-  debtTabs = {
+  public readonly debtTabs = {
     GeneralInfo: 0,
     Transactions: 1,
     ProposalInfo: 2,
   };
 
-  activeTab = this.debtTabs.GeneralInfo;
+  public activeTab = this.debtTabs.GeneralInfo;
 }

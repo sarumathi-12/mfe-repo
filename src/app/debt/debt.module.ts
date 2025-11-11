@@ -6,8 +6,10 @@ import { DebtComponent } from './debt.component';
 import { RouterModule } from '@angular/router';
 import { GeneralInfoComponent } from './general-info/general-info.component';
 import { MatCardModule } from '@angular/material/card';
-import { MatLegacyTabsModule } from '@angular/material/legacy-tabs';
+import { MatTabsModule } from '@angular/material/tabs';
 import { HeaderComponent } from './header/header.component';
+import { MatDialogModule } from '@angular/material/dialog';
+import { MatButtonModule } from '@angular/material/button';
 
 
 @NgModule({
@@ -20,7 +22,9 @@ import { HeaderComponent } from './header/header.component';
     CommonModule,
     DebtRoutingModule,
     MatCardModule,
-    MatLegacyTabsModule
+    MatTabsModule,
+    MatDialogModule,
+    MatButtonModule,
   ]
 })
 export class DebtModule { }
