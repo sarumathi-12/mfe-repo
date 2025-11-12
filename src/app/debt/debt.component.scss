@@ -25,7 +25,7 @@ app-header {
   border-bottom: 0.06rem solid #e0e0e0; 
 }
 
-.custom-tabs .mat-mdc-tab {
+ .custom-tabs .mat-mdc-tab {
   font-size: 1.4rem; 
   font-weight: 700; 
   color: #555 ;
@@ -33,13 +33,13 @@ app-header {
   min-width: auto; 
 }
 
-.custom-tabs .mat-mdc-tab:not(.mdc-tab--active):hover {
+.mat-mdc-tab:not(.mdc-tab--active):hover {
   color: #8e24aa;
 }
 
-.custom-tabs .mat-mdc-tab.mdc-tab--active,
-.custom-tabs .mat-mdc-tab.mdc-tab--active:hover,
-.custom-tabs .mat-mdc-tab.mdc-tab--active:focus {
+ .mat-mdc-tab.mdc-tab--active,
+ .mat-mdc-tab.mdc-tab--active:hover,
+ .mat-mdc-tab.mdc-tab--active:focus {
   color: #6a1b9a;
   font-weight: 700;
 }

@@ -1,27 +1,26 @@
 <app-header></app-header>
 
 <div class="main-content-wrapper">
-  <div class="debt-container">
-    <!-- Material Tabs -->
-    <mat-tab-group [(selectedIndex)]="activeTab" class="custom-tabs">
-      <mat-tab label="General Info"></mat-tab>
-      <mat-tab label="Transactions"></mat-tab>
-      <mat-tab label="Proposal Info"></mat-tab>
-    </mat-tab-group>
+    <div class="debt-container">
+        <!-- Material Tabs -->
+        <mat-tab-group [(selectedIndex)]="activeTab" class="custom-tabs">
+            <mat-tab *ngFor="let tab of tabs; let i = index" [label]="tab.tabName">
+            </mat-tab>
+        </mat-tab-group>
 
-    <!-- Tab content switch -->
-    <div class="tab-content" [ngSwitch]="activeTab">
-      <ng-container *ngSwitchCase="debtTabs.GeneralInfo">
-        <app-general-info></app-general-info>
-      </ng-container>
+        <!-- Tab content switch -->
+        <div class="tab-content" [ngSwitch]="activeTab">
+            <ng-container *ngSwitchCase="debtTabs.GeneralInfo">
+                <app-general-info></app-general-info>
+            </ng-container>
 
-      <ng-container *ngSwitchCase="debtTabs.Transactions">
+            <ng-container *ngSwitchCase="debtTabs.Transactions">
 
-      </ng-container>
+            </ng-container>
 
-      <ng-container *ngSwitchCase="debtTabs.ProposalInfo">
-  
-      </ng-container>
+            <ng-container *ngSwitchCase="debtTabs.ProposalInfo">
+
+            </ng-container>
+        </div>
     </div>
-  </div>
 </div>
