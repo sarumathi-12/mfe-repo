@@ -9,22 +9,47 @@ import { MatCardModule } from '@angular/material/card';
 import { MatTabsModule } from '@angular/material/tabs';
 import { HeaderComponent } from './header/header.component';
 import { MatDialogModule } from '@angular/material/dialog';
-import { MatButtonModule } from '@angular/material/button';
+import { MatButtonModule, MatIconButton } from '@angular/material/button';
+import { MatInputModule } from '@angular/material/input';
+import { MatSelectModule } from '@angular/material/select';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatNativeDateModule } from '@angular/material/core';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { MatIconModule } from '@angular/material/icon';
+import { ProposalnameDialogComponent } from './proposalname-dialog/proposalname-dialog.component';
+import { MatDividerModule } from '@angular/material/divider';
+import { GridModule } from '@syncfusion/ej2-angular-grids';
+import { NgxMaskModule } from 'ngx-mask';
+import { AprVerificationdateDialogComponent } from './apr-verificationdate-dialog/apr-verificationdate-dialog.component';
 
 
 @NgModule({
   declarations: [
     DebtComponent,
     GeneralInfoComponent,
-    HeaderComponent
+    HeaderComponent,
+    ProposalnameDialogComponent,
+    AprVerificationdateDialogComponent
   ],
   imports: [
     CommonModule,
     DebtRoutingModule,
+    ReactiveFormsModule,
+    NgxMaskModule.forRoot(),
     MatCardModule,
     MatTabsModule,
     MatDialogModule,
+    MatDividerModule,
     MatButtonModule,
-  ]
+    MatIconModule,
+    MatInputModule,
+    MatSelectModule,
+    MatDatepickerModule,
+    MatNativeDateModule,
+    MatFormFieldModule,
+    GridModule,
+    FormsModule
+  ],
 })
 export class DebtModule { }

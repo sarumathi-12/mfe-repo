@@ -1,0 +1,56 @@
+<h2 mat-dialog-title class="dialog-title">Add Proposal Name</h2>
+
+<mat-dialog-content [formGroup]="addNameForm">
+    <div class="row g-3">
+
+        <!-- First Name -->
+        <div class="col-12 col-md-4 gi-field">
+            <label class="field-label">First Name <span class="required-star">*</span></label>
+            <mat-form-field appearance="outline" class="full-width">
+                <input matInput formControlName="firstName" placeholder="Enter first name" />
+                <mat-error *ngIf="addNameForm.get('firstName')?.hasError('required')" class="validation-message">
+                    First Name is required
+                </mat-error>
+            </mat-form-field>
+        </div>
+
+        <!-- Middle Initial -->
+        <div class="col-12 col-md-2 gi-field">
+            <label class="field-label">Middle Initial</label>
+            <mat-form-field appearance="outline" class="full-width">
+                <input matInput formControlName="middleInitial" placeholder="Enter middle name" />
+            </mat-form-field>
+        </div>
+
+        <!-- Last Name -->
+        <div class="col-12 col-md-4 gi-field">
+            <label class="field-label">Last Name <span class="required-star">*</span></label>
+            <mat-form-field appearance="outline" class="full-width">
+                <input matInput formControlName="lastName" placeholder="Enter last name" />
+                <mat-error *ngIf="addNameForm.get('lastName')?.hasError('required')" class="validation-message">
+                    Last Name is required
+                </mat-error>
+            </mat-form-field>
+        </div>
+
+        <!-- Suffix (dropdown) -->
+        <div class="col-12 col-md-2 gi-field">
+            <label class="field-label">Suffix</label>
+            <mat-form-field appearance="outline" class="full-width">
+                <mat-select formControlName="suffix" placeholder="Enter suffix">
+                    <mat-option value="">None</mat-option>
+                    <mat-option value="Jr.">Jr.</mat-option>
+                    <mat-option value="Sr.">Sr.</mat-option>
+                    <mat-option value="III">III</mat-option>
+                    <mat-option value="IV">IV</mat-option>
+                </mat-select>
+            </mat-form-field>
+        </div>
+
+    </div>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+    <button mat-stroked-button (click)="cancel()">Cancel</button>
+    <button mat-raised-button color="primary" (click)="submit()">Add</button>
+</mat-dialog-actions>
