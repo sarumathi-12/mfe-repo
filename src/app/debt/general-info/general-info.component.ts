@@ -12,54 +12,67 @@ import { AprVerificationdateDialogComponent } from '../apr-verificationdate-dial
   styleUrls: ['./general-info.component.scss']
 })
 export class GeneralInfoComponent {
-  public generalInfoForm: FormGroup;
+  public generalInfoForm!: FormGroup;
   public balanceForm!: FormGroup;
-  public minDate: Date;
+  public minDate!: Date;
   public showFullAccountNumber = false;
   public proposalNames: string[] = ['Bruce Doe', 'Monica Geller'];
+  public ownerOptions = [
+    'John Doe',
+    'Jane Doe'
+  ];
+
+  public paymentPriorityOptions = [1, 2, 3];
+
+  public proposalAddress = ['Address 1', 'Address 2']
 
 
-  constructor(private fb: FormBuilder, private dialog: MatDialog) {
-    const today = new Date();
-    this.minDate = new Date(today);
-    this.minDate.setDate(today.getDate() + 1);
+  constructor(private fb: FormBuilder, private dialog: MatDialog) { }
 
+  private createGeneralForm() {
     this.generalInfoForm = this.fb.group({
       creditorName: [{ value: 'Citigroup', disabled: true }],
       accountNumber: [''],
       ownerOfDebt: ['', Validators.required],
       proposalName: [''],
       dueDate: ['', Validators.required],
-      paymentPriority: [''],
+      paymentPriority: [''], 
       originalCreditor: [''],
       proposalAddress: ['']
     });
 
+    // default values
     this.generalInfoForm.patchValue({
       creditorName: 'Citigroup',
       accountNumber: '1234 5678 9871 1287',
       ownerOfDebt: 'John Doe',
       proposalName: 'Bruce Doe',
       dueDate: new Date(),
-      paymentPriority: '1',
+      paymentPriority: 1,
       originalCreditor: 'Citygroup',
-      proposalAddress: 'address1'
+      proposalAddress: 'Address 1'
     });
   }
 
-  get maskedAccountNumber(): string {
+  private setMinDate() {
+    const today = new Date();
+    this.minDate = new Date(today);
+    this.minDate.setDate(today.getDate() + 1);
+  }
+
+  public get maskedAccountNumber(): string {
     const full = this.generalInfoForm.get('accountNumber')?.value || '';
     if (!full) return '';
     const visiblePart = full.slice(-4);
-    return '•••• •••• •••• ' + visiblePart;
+    return '•••• •••• ••••' + visiblePart;
   }
 
 
-  toggleAccountVisibility(): void {
+  public toggleAccountVisibility(): void {
     this.showFullAccountNumber = !this.showFullAccountNumber;
   }
 
-  openAddNameDialog(): void {
+  public openAddNameDialog(): void {
     const dialogRef = this.dialog.open(ProposalnameDialogComponent, {
       width: '900px',
       disableClose: true
@@ -91,60 +104,50 @@ export class GeneralInfoComponent {
   ];
 
   ngOnInit(): void {
-    const group: any = {};
-    this.gridData.forEach(row => {
-      group[this.getControlName(row.title)] = [row.dmpInfo, [Validators.required]];
-    });
-    this.balanceForm = this.fb.group(group);
+    this.createGeneralForm();
+    this.setMinDate();
 
+    this.createBalanceForm();
+    this.subscribeToBalanceChanges();
+  }
+
+  private createBalanceForm() {
+    const group: any = {};
+    this.gridData.forEach(r =>
+      group[this.getControlName(r.title)] = [r.dmpInfo, Validators.required]
+    );
+    this.balanceForm = this.fb.group(group);
+  }
+
+  private subscribeToBalanceChanges() {
     this.gridData.forEach(row => {
       const control = this.balanceForm.get(this.getControlName(row.title));
-      control?.valueChanges.subscribe(val => {
-        let value = val;
-
-        if (typeof value === 'string') {
-          if (row.title !== 'APR') {
-            value = value.replace(/\$/g, '').replace(/,/g, '');
-          } else {
-            value = value.replace(/[^0-9.]/g, '');
-
-            const parts = value.split('.');
-            if (parts.length > 2) {
-              value = parts[0] + '.' + parts[1];
-            }
-          }
-        }
-
-        const num = parseFloat(value);
-        if (isNaN(num)) {
-          control?.setErrors({ invalid: true });
-        }
-        else if (num < 0) {
-          control?.setErrors({ min: true });
-        }
-        else if (row.title === 'APR' && num > 99.99) {
-          control?.setErrors({ max: true });
-        }
-        else if (row.title !== 'APR' && num > 9999999.99) {
-          control?.setErrors({ max: true });
-        }
-        else {
-          control?.setErrors(null);
-        }
-        control?.markAsTouched();
-        control?.markAsDirty();
-        row.dmpInfo = num;
-      });
+      control?.valueChanges.subscribe(val =>
+        this.validateBalanceField(val, row, control)
+      );
     });
   }
 
+  private validateBalanceField(value: any, row: any, control: any) {
+    const num = Number(value);
 
-  getControlName(title: string): string {
+    if (isNaN(num)) control.setErrors({ invalid: true });
+    else if (num < 0) control.setErrors({ min: true });
+    else if (row.title === 'APR' && num > 99.99) control.setErrors({ max: true });
+    else if (row.title !== 'APR' && num > 9999999.99) control.setErrors({ max: true });
+    else control.setErrors(null);
+
+    control.markAsTouched();
+    control.markAsDirty();
+
+    row.dmpInfo = num;
+  }
+
+  public getControlName(title: string): string {
     return title.replace(/[^a-zA-Z]/g, '');
   }
 
-
-  getErrorMessage(row: any): string {
+  public getErrorMessage(row: any): string {
     const control = this.balanceForm.get(this.getControlName(row.title));
     if (!control) return '';
 
@@ -164,7 +167,7 @@ export class GeneralInfoComponent {
   }
 
 
-  openVerificationDialog(row: any) {
+  public openVerificationDialog(row: any) {
     const dialogRef = this.dialog.open(AprVerificationdateDialogComponent, {
       width: '450px',
       data: { aprValue: row.dmpInfo }

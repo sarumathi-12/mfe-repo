@@ -22,7 +22,8 @@ import { MatDividerModule } from '@angular/material/divider';
 import { GridModule } from '@syncfusion/ej2-angular-grids';
 import { NgxMaskModule } from 'ngx-mask';
 import { AprVerificationdateDialogComponent } from './apr-verificationdate-dialog/apr-verificationdate-dialog.component';
-
+import { CURRENCY_MASK_CONFIG, CurrencyMaskModule } from 'ng2-currency-mask';
+import { CustomCurrencyMaskConfig } from '../config/currency-mask.config';
 
 @NgModule({
   declarations: [
@@ -37,6 +38,7 @@ import { AprVerificationdateDialogComponent } from './apr-verificationdate-dialo
     DebtRoutingModule,
     ReactiveFormsModule,
     NgxMaskModule.forRoot(),
+    CurrencyMaskModule,
     MatCardModule,
     MatTabsModule,
     MatDialogModule,
@@ -51,5 +53,8 @@ import { AprVerificationdateDialogComponent } from './apr-verificationdate-dialo
     GridModule,
     FormsModule
   ],
+  providers: [
+    { provide: CURRENCY_MASK_CONFIG, useValue: CustomCurrencyMaskConfig }
+  ]
 })
 export class DebtModule { }

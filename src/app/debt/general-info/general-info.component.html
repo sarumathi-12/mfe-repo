@@ -29,11 +29,13 @@
                     <label class="field-label">Owner of Debt <span class="required-star">*</span></label>
                     <mat-form-field appearance="outline">
                         <mat-select formControlName="ownerOfDebt" placeholder="Select owner" required>
-                            <mat-option value="John Doe">John Doe</mat-option>
-                            <mat-option value="Jane Doe">Jane Doe</mat-option>
+                            <mat-option *ngFor="let owner of ownerOptions" [value]="owner">
+                                {{ owner }}
+                            </mat-option>
                         </mat-select>
                     </mat-form-field>
                 </div>
+
 
                 <div class="col-12 col-md-3 gi-field">
                     <label class="field-label">Proposal Name</label>
@@ -65,14 +67,14 @@
                 <div class="col-12 col-md-3 gi-field">
                     <label class="field-label">Payment Priority</label>
                     <mat-form-field appearance="outline" class="full-width">
-                        <mat-select formControlName="paymentPriority" placeholder="Select priority"
-                            panelClass="mat-select-floating-panel">
-                            <mat-option value="1">1</mat-option>
-                            <mat-option value="2">2</mat-option>
-                            <mat-option value="3">3</mat-option>
+                        <mat-select formControlName="paymentPriority" placeholder="Select priority">
+                            <mat-option *ngFor="let priority of paymentPriorityOptions" [value]="priority">
+                                {{ priority }}
+                            </mat-option>
                         </mat-select>
                     </mat-form-field>
                 </div>
+
 
                 <div class="col-12 col-md-2 gi-field">
                     <label class="field-label">Original Creditor</label>
@@ -85,8 +87,9 @@
                     <label class="field-label">Proposal Address</label>
                     <mat-form-field appearance="outline" class="full-width">
                         <mat-select formControlName="proposalAddress" placeholder="Select address">
-                            <mat-option value="address1">Address 1</mat-option>
-                            <mat-option value="address2">Address 2</mat-option>
+                            <mat-option *ngFor="let Address of proposalAddress" [value]="Address">
+                                {{ Address }}
+                            </mat-option>
                         </mat-select>
                     </mat-form-field>
                 </div>
@@ -117,24 +120,24 @@
                 </ng-template>
             </e-column>
 
-            <!-- DMP Info with ngx-mask -->
+            <!-- DMP Info -->
             <e-column headerText="DMP Info" textAlign="Left">
                 <ng-template #template let-data>
                     <form [formGroup]="balanceForm" class="dmp-form-row">
                         <mat-form-field appearance="outline" class="dmp-input-field">
+                            <mat-icon matPrefix *ngIf="data.title !== 'APR'">attach_money</mat-icon>
 
-                            <input matInput [placeholder]="data.title === 'APR' ? '%' : '$'"
-                                [formControlName]="getControlName(data.title)"
-                                [mask]="data.title !== 'APR' ? 'separator.2' : null"
-                                [thousandSeparator]="data.title !== 'APR' ? ',' : ''"
-                                [prefix]="data.title !== 'APR' ? '$' : ''">
+                            <input matInput [placeholder]="data.title === 'APR' ? '%' : 'Amount'"
+                                [formControlName]="getControlName(data.title)" currencyMask
+                                *ngIf="data.title !== 'APR'" />
 
+                            <input matInput *ngIf="data.title === 'APR'" [formControlName]="getControlName(data.title)"
+                            [mask]="'separator.2'" />
                             <span matSuffix *ngIf="data.title === 'APR'">%</span>
 
                             <mat-error *ngIf="balanceForm.get(getControlName(data.title))?.invalid">
                                 {{ getErrorMessage(data) }}
                             </mat-error>
-
                         </mat-form-field>
 
                         <!-- Verified On label above clickable link -->
