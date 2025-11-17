@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
+import { GeneralInfoComponent } from './debt/general-info/general-info.component';
 
 const routes: Routes = [ 
   { path: 'debt', loadChildren: () => import('./debt/debt.module').then(m => m.DebtModule) },
