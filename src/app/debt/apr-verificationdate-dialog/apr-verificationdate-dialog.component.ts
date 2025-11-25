@@ -13,8 +13,7 @@ verificationForm: FormGroup;
 
   constructor(
     private fb: FormBuilder,
-    private dialogRef: MatDialogRef<AprVerificationdateDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: any
+    private dialogRef: MatDialogRef<AprVerificationdateDialogComponent>
   ) {
     const today = new Date();
     this.maxDate = new Date(today);
@@ -26,10 +25,16 @@ verificationForm: FormGroup;
   }
 
   save() {
-    if (this.verificationForm.valid) {
-      this.dialogRef.close({ verificationDate: this.verificationForm.value.verificationDate });
-    }
+  if (this.verificationForm.invalid) {
+    this.verificationForm.markAllAsTouched();  
+    return;
   }
+
+  this.dialogRef.close({
+    verificationDate: this.verificationForm.value.verificationDate
+  });
+}
+
 
   cancel() {
     this.dialogRef.close();

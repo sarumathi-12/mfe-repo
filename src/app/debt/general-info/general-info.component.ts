@@ -169,8 +169,7 @@ export class GeneralInfoComponent {
 
   public openVerificationDialog(row: any) {
     const dialogRef = this.dialog.open(AprVerificationdateDialogComponent, {
-      width: '450px',
-      data: { aprValue: row.dmpInfo }
+      width: '450px'
     });
 
     dialogRef.afterClosed().subscribe(result => {
