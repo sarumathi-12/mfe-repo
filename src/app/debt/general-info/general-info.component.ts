@@ -26,6 +26,23 @@ export class GeneralInfoComponent {
 
   public proposalAddress = ['Address 1', 'Address 2']
 
+  private readonly fieldRules: any = {
+    APR: {
+      max: 99.99,
+      min: 0,
+      minError: 'Minimum APR is 0%',
+      maxError: 'Maximum APR is 99.99%',
+      invalidError: 'Invalid APR value'
+    },
+    DEFAULT: {
+      max: 9999999.99,
+      min: 0,
+      minError: 'Minimum value is $0',
+      maxError: 'Maximum value is $9,999,999.99',
+      invalidError: 'Invalid amount'
+    }
+  };
+
 
   constructor(private fb: FormBuilder, private dialog: MatDialog) { }
 
@@ -36,7 +53,7 @@ export class GeneralInfoComponent {
       ownerOfDebt: ['', Validators.required],
       proposalName: [''],
       dueDate: ['', Validators.required],
-      paymentPriority: [''], 
+      paymentPriority: [''],
       originalCreditor: [''],
       proposalAddress: ['']
     });
@@ -130,11 +147,11 @@ export class GeneralInfoComponent {
 
   private validateBalanceField(value: any, row: any, control: any) {
     const num = Number(value);
+    const rules = row.title === 'APR' ? this.fieldRules.APR : this.fieldRules.DEFAULT;
 
     if (isNaN(num)) control.setErrors({ invalid: true });
-    else if (num < 0) control.setErrors({ min: true });
-    else if (row.title === 'APR' && num > 99.99) control.setErrors({ max: true });
-    else if (row.title !== 'APR' && num > 9999999.99) control.setErrors({ max: true });
+    else if (num < rules.min) control.setErrors({ min: true });
+    else if (num > rules.max) control.setErrors({ max: true });
     else control.setErrors(null);
 
     control.markAsTouched();
@@ -142,6 +159,7 @@ export class GeneralInfoComponent {
 
     row.dmpInfo = num;
   }
+
 
   public getControlName(title: string): string {
     return title.replace(/[^a-zA-Z]/g, '');
@@ -152,20 +170,15 @@ export class GeneralInfoComponent {
     if (!control) return '';
 
     if (control.hasError('required')) return 'This field is required';
-    if (row.title === 'APR') {
-      if (control.hasError('min')) return 'Minimum APR is 0%';
-      if (control.hasError('max')) return 'Maximum APR is 99.99%';
-      if (control.hasError('invalid')) return 'Invalid APR value';
-    }
-    if (row.title !== 'APR') {
-      if (control.hasError('min')) return 'Minimum value is $0';
-      if (control.hasError('max')) return 'Maximum value is $9,999,999.99';
-      if (control.hasError('invalid')) return 'Invalid amount';
-    }
+
+    const rules = row.title === 'APR' ? this.fieldRules.APR : this.fieldRules.DEFAULT;
+
+    if (control.hasError('min')) return rules.minError;
+    if (control.hasError('max')) return rules.maxError;
+    if (control.hasError('invalid')) return rules.invalidError;
 
     return '';
   }
-
 
   public openVerificationDialog(row: any) {
     const dialogRef = this.dialog.open(AprVerificationdateDialogComponent, {
