@@ -5,6 +5,7 @@
         <form [formGroup]="generalInfoForm">
 
             <div class="row g-3">
+                <!-- Creditor Name -->
                 <div class="col-12 col-md-3 gi-field">
                     <label class="field-label">Creditor Name</label>
                     <mat-form-field class="custom-disabled" appearance="outline">
@@ -12,12 +13,14 @@
                     </mat-form-field>
                 </div>
 
+                <!-- Account Number -->
                 <div class="col-12 col-md-3 gi-field">
                     <label class="field-label">Account Number</label>
                     <mat-form-field appearance="outline" class="account-field">
                         <input matInput
                             [value]="showFullAccountNumber ? generalInfoForm.get('accountNumber')?.value : maskedAccountNumber"
                             readonly />
+
                         <button mat-icon-button matSuffix type="button" (click)="toggleAccountVisibility()"
                             [attr.aria-label]="showFullAccountNumber ? 'Hide account number' : 'Show account number'">
                             <mat-icon>{{ showFullAccountNumber ? 'visibility' : 'visibility_off' }}</mat-icon>
@@ -25,57 +28,48 @@
                     </mat-form-field>
                 </div>
 
+                <!-- Owner of Debt -->
                 <div class="col-12 col-md-3 gi-field">
-                    <label class="field-label">Owner of Debt <span class="required-star">*</span></label>
-                    <mat-form-field appearance="outline">
-                        <mat-select formControlName="ownerOfDebt" placeholder="Select owner" required>
-                            <mat-option *ngFor="let owner of ownerOptions" [value]="owner">
-                                {{ owner }}
-                            </mat-option>
-                        </mat-select>
-                    </mat-form-field>
+                    <label class="field-label">
+                        Owner of Debt <span class="required-star">*</span>
+                    </label>
+
+                    <app-shared-select formControlName="ownerOfDebt" [options]="ownerOptions">
+                    </app-shared-select>
                 </div>
 
-
+                <!-- Proposal Name -->
                 <div class="col-12 col-md-3 gi-field">
                     <label class="field-label">Proposal Name</label>
-                    <mat-form-field appearance="outline" class="full-width">
-                        <mat-select formControlName="proposalName" placeholder="Select proposal">
-                            <mat-option *ngFor="let name of proposalNames" [value]="name">{{ name }}</mat-option>
-                            <mat-divider></mat-divider>
-                            <mat-option (click)="openAddNameDialog()" class="add-new-option">
-                                + Add Name
-                            </mat-option>
-                        </mat-select>
-                    </mat-form-field>
+                    <app-shared-select formControlName="proposalName" placeholder="select proposal"
+                        [options]="proposalNames" addOptionLabel="+ Add Name" [addOptionClick]="onAddProposalNameClick">
+                    </app-shared-select>
                 </div>
             </div>
 
-
-            <!-- Row 2  -->
+            <!-- Row 2 -->
             <div class="row">
+                <!-- Due Date (date input remains normal) -->
                 <div class="col-12 col-md-3 gi-field">
                     <label class="field-label">Due Date <span class="required-star">*</span></label>
                     <mat-form-field appearance="outline" class="full-width">
                         <input matInput [matDatepicker]="picker" [min]="minDate" formControlName="dueDate"
                             placeholder="Select due date" required />
+
                         <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
                         <mat-datepicker #picker></mat-datepicker>
                     </mat-form-field>
                 </div>
 
+                <!-- Payment Priority -->
                 <div class="col-12 col-md-3 gi-field">
                     <label class="field-label">Payment Priority</label>
-                    <mat-form-field appearance="outline" class="full-width">
-                        <mat-select formControlName="paymentPriority" placeholder="Select priority">
-                            <mat-option *ngFor="let priority of paymentPriorityOptions" [value]="priority">
-                                {{ priority }}
-                            </mat-option>
-                        </mat-select>
-                    </mat-form-field>
+
+                    <app-shared-select formControlName="paymentPriority" [options]="paymentPriorityOptions">
+                    </app-shared-select>
                 </div>
 
-
+                <!-- Original Creditor (input stays normal) -->
                 <div class="col-12 col-md-2 gi-field">
                     <label class="field-label">Original Creditor</label>
                     <mat-form-field appearance="outline" class="full-width">
@@ -83,21 +77,19 @@
                     </mat-form-field>
                 </div>
 
+                <!-- Proposal Address -->
                 <div class="col-12 col-md-4 gi-field">
                     <label class="field-label">Proposal Address</label>
-                    <mat-form-field appearance="outline" class="full-width">
-                        <mat-select formControlName="proposalAddress" placeholder="Select address">
-                            <mat-option *ngFor="let Address of proposalAddress" [value]="Address">
-                                {{ Address }}
-                            </mat-option>
-                        </mat-select>
-                    </mat-form-field>
+
+                    <app-shared-select formControlName="proposalAddress" [options]="proposalAddress">
+                    </app-shared-select>
                 </div>
             </div>
 
         </form>
     </div>
 </div>
+
 
 
 <!-- balance-info-->
@@ -132,7 +124,7 @@
                                 *ngIf="data.title !== 'APR'" />
 
                             <input matInput *ngIf="data.title === 'APR'" [formControlName]="getControlName(data.title)"
-                            [mask]="'separator.2'" />
+                                [mask]="'separator.2'" />
                             <span matSuffix *ngIf="data.title === 'APR'">%</span>
 
                             <mat-error *ngIf="balanceForm.get(getControlName(data.title))?.invalid">

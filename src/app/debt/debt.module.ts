@@ -24,6 +24,12 @@ import { NgxMaskModule } from 'ngx-mask';
 import { AprVerificationdateDialogComponent } from './apr-verificationdate-dialog/apr-verificationdate-dialog.component';
 import { CURRENCY_MASK_CONFIG, CurrencyMaskModule } from 'ng2-currency-mask';
 import { CustomCurrencyMaskConfig } from '../config/currency-mask.config';
+import { TransactionComponent } from './transaction/transaction.component';
+import { EffectsModule } from '@ngrx/effects';
+import { StoreModule } from '@ngrx/store';
+import { GeneralInfoEffects } from '../store/general-info/general-info.effects';
+import { generalInfoReducer } from '../store/general-info/general-info.reducer';
+import { SharedModule } from '../shared/shared.module';
 
 @NgModule({
   declarations: [
@@ -31,13 +37,17 @@ import { CustomCurrencyMaskConfig } from '../config/currency-mask.config';
     GeneralInfoComponent,
     HeaderComponent,
     ProposalnameDialogComponent,
-    AprVerificationdateDialogComponent
+    AprVerificationdateDialogComponent,
+    TransactionComponent
   ],
   imports: [
     CommonModule,
     DebtRoutingModule,
     ReactiveFormsModule,
     NgxMaskModule.forRoot(),
+    StoreModule.forFeature('generalInfo', generalInfoReducer),
+    EffectsModule.forFeature([GeneralInfoEffects]),
+    SharedModule,
     CurrencyMaskModule,
     MatCardModule,
     MatTabsModule,
