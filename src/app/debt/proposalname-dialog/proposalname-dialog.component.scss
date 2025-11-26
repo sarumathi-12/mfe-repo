@@ -1,0 +1,50 @@
+.mat-dialog-container {
+  max-width: 900px;   
+  width: 100%;
+  padding: 1.5rem;    
+  box-sizing: border-box;
+}
+
+.dialog-title {
+  font-weight: 700;   
+  font-size: 1.5rem;  
+  margin-bottom: 1rem;
+}
+
+.gi-field {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+
+  .field-label {
+    font-weight: 600;
+    font-size: 1.2rem; 
+    margin-bottom: 0.4rem;
+    color: #333;
+  }
+
+
+  .mdc-text-field__input,
+  input[matInput],
+  .mat-mdc-select-trigger {
+    font-size: 1.2rem; 
+    width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
+  }
+}
+
+.required-star {
+  color: #d32f2f;
+  margin-left: 2px;
+  font-weight: 700;
+}
+
+.validation-message {
+  font-size: 0.875rem;   
+  color: #d32f2f;        
+  text-align: left;      
+  margin-top: 0.25rem;   
+}
+
+

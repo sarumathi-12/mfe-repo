@@ -1,5 +1,155 @@
 <div class="general-info-container">
-  <div class="content-box">
-    <p>general-info works!</p>
-  </div>
+    <div class="content-box">
+        <h3 class="form-header">General Info</h3>
+
+        <form [formGroup]="generalInfoForm">
+
+            <div class="row g-3">
+                <div class="col-12 col-md-3 gi-field">
+                    <label class="field-label">Creditor Name</label>
+                    <mat-form-field class="custom-disabled" appearance="outline">
+                        <input matInput formControlName="creditorName" />
+                    </mat-form-field>
+                </div>
+
+                <div class="col-12 col-md-3 gi-field">
+                    <label class="field-label">Account Number</label>
+                    <mat-form-field appearance="outline" class="account-field">
+                        <input matInput
+                            [value]="showFullAccountNumber ? generalInfoForm.get('accountNumber')?.value : maskedAccountNumber"
+                            readonly />
+                        <button mat-icon-button matSuffix type="button" (click)="toggleAccountVisibility()"
+                            [attr.aria-label]="showFullAccountNumber ? 'Hide account number' : 'Show account number'">
+                            <mat-icon>{{ showFullAccountNumber ? 'visibility' : 'visibility_off' }}</mat-icon>
+                        </button>
+                    </mat-form-field>
+                </div>
+
+                <div class="col-12 col-md-3 gi-field">
+                    <label class="field-label">Owner of Debt <span class="required-star">*</span></label>
+                    <mat-form-field appearance="outline">
+                        <mat-select formControlName="ownerOfDebt" placeholder="Select owner" required>
+                            <mat-option *ngFor="let owner of ownerOptions" [value]="owner">
+                                {{ owner }}
+                            </mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                </div>
+
+
+                <div class="col-12 col-md-3 gi-field">
+                    <label class="field-label">Proposal Name</label>
+                    <mat-form-field appearance="outline" class="full-width">
+                        <mat-select formControlName="proposalName" placeholder="Select proposal">
+                            <mat-option *ngFor="let name of proposalNames" [value]="name">{{ name }}</mat-option>
+                            <mat-divider></mat-divider>
+                            <mat-option (click)="openAddNameDialog()" class="add-new-option">
+                                + Add Name
+                            </mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                </div>
+            </div>
+
+
+            <!-- Row 2  -->
+            <div class="row">
+                <div class="col-12 col-md-3 gi-field">
+                    <label class="field-label">Due Date <span class="required-star">*</span></label>
+                    <mat-form-field appearance="outline" class="full-width">
+                        <input matInput [matDatepicker]="picker" [min]="minDate" formControlName="dueDate"
+                            placeholder="Select due date" required />
+                        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                        <mat-datepicker #picker></mat-datepicker>
+                    </mat-form-field>
+                </div>
+
+                <div class="col-12 col-md-3 gi-field">
+                    <label class="field-label">Payment Priority</label>
+                    <mat-form-field appearance="outline" class="full-width">
+                        <mat-select formControlName="paymentPriority" placeholder="Select priority">
+                            <mat-option *ngFor="let priority of paymentPriorityOptions" [value]="priority">
+                                {{ priority }}
+                            </mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                </div>
+
+
+                <div class="col-12 col-md-2 gi-field">
+                    <label class="field-label">Original Creditor</label>
+                    <mat-form-field appearance="outline" class="full-width">
+                        <input matInput formControlName="originalCreditor" placeholder="Enter original creditor" />
+                    </mat-form-field>
+                </div>
+
+                <div class="col-12 col-md-4 gi-field">
+                    <label class="field-label">Proposal Address</label>
+                    <mat-form-field appearance="outline" class="full-width">
+                        <mat-select formControlName="proposalAddress" placeholder="Select address">
+                            <mat-option *ngFor="let Address of proposalAddress" [value]="Address">
+                                {{ Address }}
+                            </mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                </div>
+            </div>
+
+        </form>
+    </div>
+</div>
+
+
+<!-- balance-info-->
+<div class="balance-info-box">
+    <h3 class="form-header">Balance / Info</h3>
+
+    <ejs-grid #grid [dataSource]="gridData" [allowPaging]="false">
+        <e-columns>
+
+            <!-- Title -->
+            <e-column field="title" headerText="Title" textAlign="Left"></e-column>
+
+            <!-- Original Info -->
+            <e-column headerText="Original Info" textAlign="Left">
+                <ng-template #template let-data>
+                    <span *ngIf="data.originalInfo != null; else noValue">
+                        <b>${{ data.originalInfo.toFixed(2) }}</b>
+                    </span>
+                    <ng-template #noValue>--</ng-template>
+                </ng-template>
+            </e-column>
+
+            <!-- DMP Info -->
+            <e-column headerText="DMP Info" textAlign="Left">
+                <ng-template #template let-data>
+                    <form [formGroup]="balanceForm" class="dmp-form-row">
+                        <mat-form-field appearance="outline" class="dmp-input-field">
+                            <mat-icon matPrefix *ngIf="data.title !== 'APR'">attach_money</mat-icon>
+
+                            <input matInput [placeholder]="data.title === 'APR' ? '%' : 'Amount'"
+                                [formControlName]="getControlName(data.title)" currencyMask
+                                *ngIf="data.title !== 'APR'" />
+
+                            <input matInput *ngIf="data.title === 'APR'" [formControlName]="getControlName(data.title)"
+                            [mask]="'separator.2'" />
+                            <span matSuffix *ngIf="data.title === 'APR'">%</span>
+
+                            <mat-error *ngIf="balanceForm.get(getControlName(data.title))?.invalid">
+                                {{ getErrorMessage(data) }}
+                            </mat-error>
+                        </mat-form-field>
+
+                        <!-- Verified On label above clickable link -->
+                        <div *ngIf="data.title === 'APR'" class="apr-verification-container">
+                            <span class="verified-label">Verified On:</span>
+                            <span class="underline-link" (click)="openVerificationDialog(data)">
+                                Add Verification Date
+                            </span>
+                        </div>
+                    </form>
+                </ng-template>
+            </e-column>
+        </e-columns>
+    </ejs-grid>
 </div>
