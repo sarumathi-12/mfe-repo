@@ -1,0 +1,23 @@
+<mat-form-field appearance="outline" class="full-width">
+
+  <mat-select
+    [value]="value"
+    (selectionChange)="onChange($event.value); onTouched()">
+
+    <mat-option *ngFor="let opt of options"
+                [value]="valueField ? opt[valueField] : opt">
+      {{ displayField ? opt[displayField] : opt }}
+    </mat-option>
+
+    <!-- Add New Option Row -->
+    <mat-divider *ngIf="addOptionLabel"></mat-divider>
+
+    <mat-option
+      *ngIf="addOptionLabel"
+      (click)="addOptionClick?.()"
+      class="add-new-option">
+      {{ addOptionLabel }}
+    </mat-option>
+
+  </mat-select>
+</mat-form-field>
