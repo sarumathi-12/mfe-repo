@@ -1,30 +1,30 @@
-import { Component, ViewChild } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import { Component, ViewChild, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { ProposalnameDialogComponent } from '../proposalname-dialog/proposalname-dialog.component';
-import { NumericTextBox } from '@syncfusion/ej2-angular-inputs';
 import { GridComponent } from '@syncfusion/ej2-angular-grids';
 import { AprVerificationdateDialogComponent } from '../apr-verificationdate-dialog/apr-verificationdate-dialog.component';
+import { GeneralInfoService } from '../services/general-info.service';
 
 @Component({
   selector: 'app-general-info',
   templateUrl: './general-info.component.html',
   styleUrls: ['./general-info.component.scss']
 })
-export class GeneralInfoComponent {
+export class GeneralInfoComponent implements OnInit {
+
   public generalInfoForm!: FormGroup;
   public balanceForm!: FormGroup;
+
   public minDate!: Date;
   public showFullAccountNumber = false;
-  public proposalNames: string[] = ['Bruce Doe', 'Monica Geller'];
-  public ownerOptions = [
-    'John Doe',
-    'Jane Doe'
-  ];
 
-  public paymentPriorityOptions = [1, 2, 3];
+  public ownerOptions: string[] = [];
+  public proposalNames: string[] = [];
+  public paymentPriorityOptions: number[] = [];
+  public proposalAddress: string[] = [];
 
-  public proposalAddress = ['Address 1', 'Address 2']
+  public gridData: any[] = [];
 
   private readonly fieldRules: any = {
     APR: {
@@ -43,31 +43,51 @@ export class GeneralInfoComponent {
     }
   };
 
+  @ViewChild('grid') public grid!: GridComponent;
 
-  constructor(private fb: FormBuilder, private dialog: MatDialog) { }
+  constructor(
+    private fb: FormBuilder,
+    private dialog: MatDialog,
+    private generalInfoService: GeneralInfoService
+  ) {}
 
-  private createGeneralForm() {
-    this.generalInfoForm = this.fb.group({
-      creditorName: [{ value: 'Citigroup', disabled: true }],
-      accountNumber: [''],
-      ownerOfDebt: ['', Validators.required],
-      proposalName: [''],
-      dueDate: ['', Validators.required],
-      paymentPriority: [''],
-      originalCreditor: [''],
-      proposalAddress: ['']
+  ngOnInit(): void {
+    this.loadGeneralInfo();   
+    this.loadBalanceInfo();   
+    this.setMinDate();
+  }
+
+  private loadGeneralInfo(): void {
+    this.generalInfoService.getGeneralInfo().subscribe(data => {
+
+      this.ownerOptions = data.ownerOptions;
+      this.proposalNames = data.proposalNames;
+      this.paymentPriorityOptions = data.paymentPriorityOptions;
+      this.proposalAddress = data.proposalAddress;
+
+      this.createGeneralForm(data);
     });
+  }
 
-    // default values
-    this.generalInfoForm.patchValue({
-      creditorName: 'Citigroup',
-      accountNumber: '1234 5678 9871 1287',
-      ownerOfDebt: 'John Doe',
-      proposalName: 'Bruce Doe',
-      dueDate: new Date(),
-      paymentPriority: 1,
-      originalCreditor: 'Citygroup',
-      proposalAddress: 'Address 1'
+  private loadBalanceInfo(): void {
+    this.generalInfoService.getBalanceInfo().subscribe(data => {
+      this.gridData = data;
+      this.createBalanceForm();
+      this.subscribeToBalanceChanges();
+    });
+  }
+
+
+  private createGeneralForm(data: any) {
+    this.generalInfoForm = this.fb.group({
+      creditorName: [{ value: data.creditorName, disabled: true }],
+      accountNumber: [data.accountNumber],
+      ownerOfDebt: [data.defaultValues.ownerOfDebt, Validators.required],
+      proposalName: [data.defaultValues.proposalName],
+      dueDate: [data.defaultValues.dueDate, Validators.required],
+      paymentPriority: [data.defaultValues.paymentPriority],
+      originalCreditor: [data.defaultValues.originalCreditor],
+      proposalAddress: [data.defaultValues.proposalAddress]
     });
   }
 
@@ -77,13 +97,16 @@ export class GeneralInfoComponent {
     this.minDate.setDate(today.getDate() + 1);
   }
 
+
   public get maskedAccountNumber(): string {
-    const full = this.generalInfoForm.get('accountNumber')?.value || '';
-    if (!full) return '';
-    const visiblePart = full.slice(-4);
-    return '•••• •••• ••••' + visiblePart;
+    const full = this.generalInfoForm?.get('accountNumber')?.value || '';
+    const visible = full.slice(-4);
+    return '•••• •••• •••• ' + visible;
   }
 
+ onAddProposalNameClick = () => {
+  this.openAddNameDialog();
+};
 
   public toggleAccountVisibility(): void {
     this.showFullAccountNumber = !this.showFullAccountNumber;
@@ -101,47 +124,30 @@ export class GeneralInfoComponent {
           .filter(x => x)
           .join(' ');
 
-        this.proposalNames.push(fullName);
-
+        this.proposalNames = [...this.proposalNames, fullName];
         this.generalInfoForm.patchValue({ proposalName: fullName });
       }
     });
   }
 
-  //<------ Balance Info -------> 
-
-  @ViewChild('grid') public grid!: GridComponent;
-
-  public gridData = [
-    { title: 'Balance', originalInfo: 1333, dmpInfo: 0 },
-    { title: 'Monthly Payment', originalInfo: 67, dmpInfo: 0 },
-    { title: 'APR', originalInfo: 12, dmpInfo: 0 },
-    { title: 'Past Due Amount', originalInfo: 10, dmpInfo: 0 },
-    { title: 'Overdue Amount', originalInfo: null, dmpInfo: 0 }
-  ];
-
-  ngOnInit(): void {
-    this.createGeneralForm();
-    this.setMinDate();
-
-    this.createBalanceForm();
-    this.subscribeToBalanceChanges();
-  }
 
   private createBalanceForm() {
     const group: any = {};
-    this.gridData.forEach(r =>
-      group[this.getControlName(r.title)] = [r.dmpInfo, Validators.required]
-    );
+
+    this.gridData.forEach(row => {
+      group[this.getControlName(row.title)] = [row.dmpInfo, Validators.required];
+    });
+
     this.balanceForm = this.fb.group(group);
   }
 
   private subscribeToBalanceChanges() {
     this.gridData.forEach(row => {
       const control = this.balanceForm.get(this.getControlName(row.title));
-      control?.valueChanges.subscribe(val =>
-        this.validateBalanceField(val, row, control)
-      );
+
+      control?.valueChanges.subscribe(value => {
+        this.validateBalanceField(value, row, control);
+      });
     });
   }
 
@@ -156,7 +162,6 @@ export class GeneralInfoComponent {
 
     control.markAsTouched();
     control.markAsDirty();
-
     row.dmpInfo = num;
   }
 
@@ -186,9 +191,7 @@ export class GeneralInfoComponent {
     });
 
     dialogRef.afterClosed().subscribe(result => {
-      if (result) {
-        row.verificationDate = result.verificationDate;
-      }
+      if (result) row.verificationDate = result.verificationDate;
     });
   }
 }

@@ -89,7 +89,7 @@ describe('GeneralInfoComponent', () => {
   // ================= Account Number Masking =================
   describe('Account Number Masking', () => {
     it('should mask account number correctly', () => {
-      expect(component.maskedAccountNumber).toBe('•••• •••• ••••1287');
+      expect(component.maskedAccountNumber).toBe('•••• •••• •••• 1287');
     });
 
     it('should toggle full account visibility', () => {
